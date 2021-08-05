@@ -75,9 +75,7 @@ jobs:
       - name: Run unit tests
         run: |
           docker-compose -f docker/unit-tests.test.yml \
-            up --exit-code-from=sut
-        env:
-          DOCKER_BUILDKIT: 1
+            up --build --exit-code-from=sut
   recipe-test:
     name: Run recipe tests
     needs: [build]
@@ -114,9 +112,7 @@ jobs:
       - name: Run test recipes on host
         run: |
           docker-compose -f docker/recipes.test.yml \
-            up --exit-code-from=sut
-        env:
-          DOCKER_BUILDKIT: 1
+            up --build --exit-code-from=sut
 
   uml-test:
     name: Run UML tests
@@ -154,9 +150,7 @@ jobs:
       - name: Run test recipes using UML backend
         run: |
           docker-compose -f docker/recipes-test-uml.yml \
-            up --exit-code-from=sut
-        env:
-          DOCKER_BUILDKIT: 1
+            up --build --exit-code-from=sut
 
   publish:
     name: Publish
