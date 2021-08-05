@@ -1,4 +1,4 @@
-name: Register updated containers
+name: Build, test and deploy
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Build Debos
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Repository checkout
@@ -25,7 +25,9 @@ jobs:
         with:
           path: /tmp/.build-cache
           key: ${{ runner.os }}-docker-${{ github.sha }}
-
+          restore-keys: |
+            ${{ runner.os }}-docker-
+          
       - name: Build Docker image
         uses: docker/build-push-action@v2
         with:
@@ -37,13 +39,8 @@ jobs:
           cache-from: type=local,src=/tmp/.build-cache
           cache-to: type=local,dest=/tmp/.build-cache-updated
 
-      - name: Update cache
-        run: |
-          rm -rf /tmp/.build-cache
-          mv /tmp/.build-cache-updated /tmp/.build-cache
-
   test:
-    name: Run Debos tests
+    name: Run tests
     needs: [build]
     runs-on: ubuntu-latest
     steps:
@@ -91,8 +88,9 @@ jobs:
             up --build --exit-code-from=sut
 
   publish:
-    name: Publish Debos container
+    name: Publish
     needs: [test]
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -109,7 +107,6 @@ jobs:
           images: edscollabora/debos,ghcr.io/eds-collabora/debos
 
       - name: Login to GitHub Container Registry
-        # if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
@@ -117,7 +114,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to DockerHub
-        # if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -136,7 +132,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true # ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
