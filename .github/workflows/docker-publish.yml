@@ -37,7 +37,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
-          cache-to: type=local,dest=/tmp/.build-cache-updated
+          cache-to: type=local,dest=/tmp/.build-cache-updated,mode=max
 
   unit-test:
     name: Run unit tests
@@ -147,16 +147,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
-
-      - name: Run unit tests
-        run: |
-          docker-compose -f docker/unit-tests.test.yml \
-            up --build --exit-code-from=sut
-
-      - name: Run test recipes on host
-        run: |
-          docker-compose -f docker/recipes.test.yml \
-            up --build --exit-code-from=sut
 
       - name: Run test recipes using UML backend
         run: |
