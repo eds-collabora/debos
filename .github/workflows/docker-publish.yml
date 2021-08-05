@@ -74,7 +74,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
-          cache-to: type=local,dest=/tmp/.build-cache-updated
 
       - name: Run unit tests
         run: |
@@ -141,3 +140,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
+          cache-from: type=local,src=/tmp/.build-cache
