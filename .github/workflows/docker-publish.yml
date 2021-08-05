@@ -11,7 +11,62 @@ on:
 
 jobs:
   build:
-    name: Build container
+    name: Build Debos and run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: eds-collabora/debos:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          file: docker/Dockerfile
+
+  test:
+    name: Build Debos and run tests
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: eds-collabora/debos
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: eds-collabora/debos:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          file: docker/Dockerfile
+
+      - name: Run unit tests
+        run: |
+          docker-compose -f docker/unit-tests.test.yml \
+            up --build --exit-code-from=sut
+
+      - name: Run test recipes on host
+        run: |
+          docker-compose -f docker/recipes.test.yml \
+            up --build --exit-code-from=sut
+
+      - name: Run test recipes using UML backend
+        run: |
+          docker-compose -f docker/recipes-test-uml.yml \
+            up --build --exit-code-from=sut
+
+  publish:
+    name: Publish container
+    needs: [test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
