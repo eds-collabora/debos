@@ -25,9 +25,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images:
-            - edscollabora/debos
-            - ghcr.io/eds-collabora/debos
+          images: edscollabora/debos,ghcr.io/eds-collabora/debos
 
       - name: Login to GitHub Container Registry
         # if: github.event_name != 'pull_request'
