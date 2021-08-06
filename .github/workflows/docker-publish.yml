@@ -72,7 +72,7 @@ jobs:
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
           load: true
-          target: build
+          target: builder
 
       - name: Run unit tests
         run: |
@@ -108,7 +108,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: eds-collabora/debos:latest
+          tags: eds-collabora/debos:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
