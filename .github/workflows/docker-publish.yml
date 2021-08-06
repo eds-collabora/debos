@@ -157,8 +157,8 @@ jobs:
     name: Publish
     needs:
       - unit-test
-      - recipe-test
-      - uml-test
+      # - recipe-test
+      # - uml-test
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
