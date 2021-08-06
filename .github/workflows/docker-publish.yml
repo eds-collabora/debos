@@ -33,7 +33,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: eds-collabora/debos:${{ github.sha }}
+          tags: eds-collabora/debos
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
@@ -67,7 +67,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: eds-collabora/debos-builder:${{ github.sha }}
+          tags: eds-collabora/debos~builder
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
@@ -76,8 +76,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          env SHA=${{ github.sha }} \
-            docker-compose -f docker/unit-tests.test.yml \
+          docker-compose -f docker/unit-tests.test.yml \
             up --exit-code-from=sut
 
   recipe-test:
@@ -108,7 +107,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: eds-collabora/debos:${{ github.sha }}
+          tags: eds-collabora/debos
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
@@ -116,7 +115,6 @@ jobs:
           
       - name: Run test recipes on host
         run: |
-          env SHA=${{ github.sha }} \
           docker-compose -f docker/recipes.test.yml \
             up --exit-code-from=sut
 
@@ -148,7 +146,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: eds-collabora/debos:latest
+          tags: eds-collabora/debos
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
@@ -156,7 +154,6 @@ jobs:
 
       - name: Run test recipes using UML backend
         run: |
-          env SHA=${{ github.sha }} \
           docker-compose -f docker/recipes-test-uml.yml \
             up --exit-code-from=sut
 
