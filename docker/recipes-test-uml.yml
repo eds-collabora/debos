@@ -6,6 +6,8 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
       target: runner
+    image:
+      "eds-collabora/debos:${SHA}"
     volumes:
       - type: bind
         source: ../tests
