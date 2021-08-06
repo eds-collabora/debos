@@ -6,7 +6,7 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     image:
-      eds-collabora/debos
+      "${IMAGE}"
     volumes:
       - type: bind
         source: ../tests
