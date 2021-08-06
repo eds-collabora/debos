@@ -11,7 +11,7 @@ on:
 
 env:
   DOCKERHUB_TAG: edscollabora/debos
-  GITHUB_TAG: ghci.io/${{ github.repository.owner }}/debos
+  GITHUB_TAG: ghci.io/${{ github.repository_owner }}/debos
   TEST_TAG: ${{ github.repository }}
 
 jobs:
