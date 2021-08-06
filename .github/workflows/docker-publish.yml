@@ -12,7 +12,7 @@ on:
 env:
   GITHUB_REPO_OWNER: ${{ github.repository_owner }}
   DOCKERHUB_TAG: edscollabora/debos
-  GITHUB_TAG: ghci.io/${{ env.GITHUB_REPO_OWNER }}/debos
+  GITHUB_TAG: ghci.io/${{ github.repository.owner }}/debos
   TEST_TAG: ${{ github.repository }}
 
 jobs:
