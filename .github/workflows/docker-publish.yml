@@ -72,49 +72,53 @@ jobs:
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
           load: true
+          target: build
 
       - name: Run unit tests
         run: |
           env SHA=${{ github.sha }} \
             docker-compose -f docker/unit-tests.test.yml \
             up --exit-code-from=sut
-  # recipe-test:
-  #   name: Run recipe tests
-  #   needs: [build]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Repository checkout
-  #       uses: actions/checkout@v2
 
-  #     - name: Extract Docker metadata
-  #       id: meta
-  #       uses: docker/metadata-action@v3
-  #       with:
-  #         images: eds-collabora/debos
+  recipe-test:
+    name: Run recipe tests
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
 
-  #     - name: Setup Docker buildx
-  #       uses: docker/setup-buildx-action@v1
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: eds-collabora/debos
 
-  #     - name: Use cache
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: /tmp/.build-cache
-  #         key: ${{ runner.os }}-docker-${{ github.sha }}
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v1
 
-  #     - name: Build Docker image
-  #       uses: docker/build-push-action@v2
-  #       with:
-  #         context: .
-  #         push: false
-  #         tags: eds-collabora/debos:latest
-  #         labels: ${{ steps.meta.outputs.labels }}
-  #         file: docker/Dockerfile
-  #         cache-from: type=local,src=/tmp/.build-cache
+      - name: Use cache
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.build-cache
+          key: ${{ runner.os }}-docker-${{ github.sha }}
 
-  #     - name: Run test recipes on host
-  #       run: |
-  #         docker-compose -f docker/recipes.test.yml \
-  #           up --exit-code-from=sut
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: eds-collabora/debos:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          file: docker/Dockerfile
+          cache-from: type=local,src=/tmp/.build-cache
+          load: true
+          
+      - name: Run test recipes on host
+        run: |
+          env SHA=${{ github.sha }} \
+          docker-compose -f docker/recipes.test.yml \
+            up --exit-code-from=sut
 
   # uml-test:
   #   name: Run UML tests
@@ -158,7 +162,7 @@ jobs:
     name: Publish
     needs:
       - unit-test
-      # - recipe-test
+      - recipe-test
       # - uml-test
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
