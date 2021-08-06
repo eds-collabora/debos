@@ -10,7 +10,6 @@ on:
     ~
 
 env:
-  GITHUB_REPO_OWNER: ${{ github.repository_owner }}
   DOCKERHUB_TAG: edscollabora/debos
   GITHUB_TAG: ghci.io/${{ github.repository.owner }}/debos
   TEST_TAG: ${{ github.repository }}
@@ -182,7 +181,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ DOCKERHUB_TAG }},${{ GITHUB_TAG }}
+          images: ${{ env.DOCKERHUB_TAG }},${{ env.GITHUB_TAG }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
