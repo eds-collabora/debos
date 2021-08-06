@@ -71,6 +71,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
+          load: true
 
       - name: Run unit tests
         run: |
