@@ -13,8 +13,8 @@ env:
   DOCKERHUB_REPO_OWNER: edscollabora
   GITHUB_REPO_OWNER: "${{ github.repository_owner }}"
   BASE_TAG: "${{ github.event.repository.name }}"
-  DOCKERHUB_TAG: "${{ DOCKERHUB_REPO_OWNER }}/${{ BASE_TAG }}"
-  GITHUB_TAG: "ghci.io/${{ GITHUB_REPO_OWNER }}/${{ BASE_TAG }}"
+  DOCKERHUB_TAG: "${{ env.DOCKERHUB_REPO_OWNER }}/${{ env.BASE_TAG }}"
+  GITHUB_TAG: "ghci.io/${{ env.GITHUB_REPO_OWNER }}/${{ env.BASE_TAG }}"
   TEST_TAG: "${{ github.repository }}"
 
 jobs:
