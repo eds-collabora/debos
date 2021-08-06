@@ -7,6 +7,6 @@ services:
       dockerfile: docker/Dockerfile
       target: builder
     image:
-      eds-collabora/debos~builder
+      eds-collabora/debos:builder
     working_dir: /usr/local/go/src/github.com/go-debos/debos
     command: go test -v ./...

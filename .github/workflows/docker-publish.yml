@@ -67,7 +67,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: eds-collabora/debos~builder
+          tags: eds-collabora/debos:builder
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
