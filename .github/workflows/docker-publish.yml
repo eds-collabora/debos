@@ -66,7 +66,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: ${{ TEST_TAG }}:builder
+          tags: ${{ env.TEST_TAG }}:builder
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
@@ -78,7 +78,7 @@ jobs:
           docker-compose -f docker/unit-tests.test.yml \
             up --exit-code-from=sut
         env:
-          IMAGE: ${{ TEST_TAG }}:builder
+          IMAGE: ${{ env.TEST_TAG }}:builder
 
   recipe-test:
     name: Run recipe tests
@@ -108,7 +108,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: ${{ TEST_TAG }}
+          tags: ${{ env.TEST_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
@@ -119,7 +119,7 @@ jobs:
           docker-compose -f docker/recipes.test.yml \
             up --exit-code-from=sut
         env:
-          IMAGE: ${{ TEST_TAG }}
+          IMAGE: ${{ env.TEST_TAG }}
 
   uml-test:
     name: Run UML tests
@@ -149,7 +149,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: ${{ TEST_TAG }}
+          tags: ${{ env.TEST_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile
           cache-from: type=local,src=/tmp/.build-cache
@@ -160,7 +160,7 @@ jobs:
           docker-compose -f docker/recipes-test-uml.yml \
             up --exit-code-from=sut
         env:
-          IMAGE: ${{ TEST_TAG }}
+          IMAGE: ${{ env.TEST_TAG }}
 
   publish:
     name: Publish
