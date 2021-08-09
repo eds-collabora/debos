@@ -8,8 +8,8 @@ env:
   # repository (so that forks get the benefit of the GHCR integration
   # without having failing builds until they configure their DockerHub
   # credentials).
-  DOCKERHUB_TAG: godebos/debos
-  DOCKERHUB_TAG_FOR: go-debos/debos
+  DOCKERHUB_TAG: edscollabora/debos
+  DOCKERHUB_TAG_FOR: eds-collabora/debos
 
 on:
   push:
