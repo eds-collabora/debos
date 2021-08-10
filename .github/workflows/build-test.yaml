@@ -3,7 +3,7 @@ name: Build, test and deploy
 env:
   GITHUB_TAG: ghcr.io/${{ github.repository }}
   TEST_TAG: ${{ github.repository }}
-  DOCKERHUB_TAG: godebos/debos
+  DOCKERHUB_TAG: edscollabora/debos
 
 on:
   - push
