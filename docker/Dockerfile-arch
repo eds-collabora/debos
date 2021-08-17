@@ -1,0 +1,83 @@
+# Global ARGs shared by all stages
+ARG DEBIAN_FRONTEND=noninteractive
+ARG GOPATH=/usr/local/go
+
+### first stage - builder ###
+FROM debian:bullseye-slim as builder
+
+ARG DEBIAN_FRONTEND
+ARG GOPATH
+ENV GOPATH=${GOPATH}
+
+# install debos build and unit-test dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        gcc \
+        git \
+        golang-go \
+        libc6-dev \
+        libostree-dev \
+        unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Build testify from source
+# testify v1.3.0 is the last version to work with golang v1.11
+WORKDIR $GOPATH/src/github.com/stretchr/testify
+RUN git clone --depth 1 --branch v1.3.0 https://github.com/stretchr/testify . && \
+    GO111MODULE=on go get ./...
+
+# Temporary fix while fakemachine still only runs on Debian
+WORKDIR $GOPATH/src/github.com/go-debos/fakemachine
+RUN git clone --depth 1 --branch eds/archsupport https://github.com/eds-collabora/fakemachine . 
+
+# Build debos
+COPY . $GOPATH/src/github.com/go-debos/debos
+WORKDIR $GOPATH/src/github.com/go-debos/debos/
+RUN go get -t ./...
+
+### second stage - arch runner ###
+FROM archlinux:base as runner
+
+ARG GOPATH
+
+# Set HOME to a writable directory in case something wants to cache things
+ENV HOME=/tmp
+
+LABEL org.label-schema.name "debos"
+LABEL org.label-schema.description "Debian OS builder"
+LABEL org.label-schema.vcs-url = "https://github.com/go-debos/debos"
+LABEL org.label-schema.docker.cmd 'docker run \
+  --rm \
+  --interactive \
+  --tty \
+  --device /dev/kvm \
+  --user $(id -u) \
+  --workdir /recipes \
+  --mount "type=bind,source=$(pwd),destination=/recipes" \
+  --security-opt label=disable'
+
+RUN pacman -Syu --noconfirm && \
+    pacman -S --noconfirm \
+        arch-install-scripts \
+        btrfs-progs \
+        busybox \
+        debootstrap \
+        dosfstools \
+        f2fs-tools \
+        git \
+        linux \
+        ostree \
+        pigz \
+        parted \
+        pkg-config \
+        qemu \
+        qemu-arch-extra \
+        rsync \
+        unzip \
+        xfsprogs \
+        zip
+
+COPY --from=builder $GOPATH/bin/$PROGRAMS /usr/local/bin/
+
+ENTRYPOINT ["/usr/local/bin/debos"]
