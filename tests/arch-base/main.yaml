@@ -1,0 +1,23 @@
+{{ $mirror := "https://mirror.pkgbuild.com" }}
+{{ $arch := "x86_64" }}
+
+architecture: amd64
+
+actions:
+  - action: pacstrap
+    mirror: https://mirror.pkgbuild.com/$repo/os/$arch
+    repositories:
+      - name: core
+        siglevel: PackageRequired DatabaseOptional TrustAll
+      - name: extra
+        siglevel: PackageRequired DatabaseOptional TrustAll
+      - name: community
+        siglevel: PackageRequired DatabaseOptional TrustAll        
+      - name: multilib
+        siglevel: PackageRequired DatabaseOptional TrustAll
+    imported-keyrings:
+      - pubring.gpg
+  # - action: pacman
+  #   packages:
+  #     - sudo
+  #     - openssh
