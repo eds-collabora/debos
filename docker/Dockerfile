@@ -29,7 +29,7 @@ RUN git clone --depth 1 --branch v1.3.0 https://github.com/stretchr/testify . &&
 
 # Build debos
 COPY . $GOPATH/src/github.com/go-debos/debos
-WORKDIR $GOPATH/src/github.com/go-debos/debos/cmd/debos
+WORKDIR $GOPATH/src/github.com/go-debos/debos/
 RUN go get -t ./...
 
 ### second stage - runner ###
@@ -101,6 +101,7 @@ RUN for arch in aarch64 alpha arm armeb cris hexagon hppa m68k microblaze mips m
       update-binfmts --import qemu-$arch; \
     done
 
-COPY --from=builder $GOPATH/bin/debos /usr/local/bin/debos
+COPY --from=builder $GOPATH/bin/debos /usr/local/bin/
+COPY --from=builder $GOPATH/bin/chmnt /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/debos"]
