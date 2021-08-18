@@ -191,7 +191,7 @@ func (d *DebootstrapAction) Run(context *debos.DebosContext) error {
 	}
 
 	/* FIXME drop the hardcoded amd64 assumption" */
-	foreign := context.Architecture != "amd64"
+	foreign := context.Architecture != context.HostArchitecture
 
 	if foreign {
 		cmdline = append(cmdline, "--foreign")

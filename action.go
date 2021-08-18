@@ -41,8 +41,9 @@ type CommonContext struct {
 
 type DebosContext struct {
 	*CommonContext
-	RecipeDir       string
-	Architecture    string
+	RecipeDir        string
+	Architecture     string
+	HostArchitecture string
 }
 
 type Action interface {

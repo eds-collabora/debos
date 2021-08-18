@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 
 	"github.com/docker/go-units"
@@ -55,9 +56,36 @@ func warnLocalhost(variable string, value string) {
 	}
 }
 
+func getHostArchitecture() (string, error) {
+	var arch string
+	switch runtime.GOARCH {
+	case "386":
+		arch = "i386"
+	case "amd64":
+		arch = "amd64"
+	case "arm":
+		arch = "armhf"
+	case "arm64":
+		arch = "arm64"
+	case "ppc64":
+		arch = "ppc64el"
+	case "mips":
+		arch = "mips"
+	case "mipsle":
+		arch = "mipsel"
+	case "mips64":
+		arch = "mips64"
+	case "s390x":
+		arch = "s390x"
+	default:
+		return "", fmt.Errorf("Unsupported CPU architecture %s", runtime.GOARCH)
+	}
+	return arch, nil
+}
 
 func main() {
-	context := debos.DebosContext { &debos.CommonContext{}, "", "" }
+	context := debos.DebosContext {
+		CommonContext: &debos.CommonContext{}, RecipeDir: "",  Architecture: "", HostArchitecture: "" }
 	var options struct {
 		Backend       string            `short:"b" long:"fakemachine-backend" description:"Fakemachine backend to use" default:"auto"`
 		ArtifactDir   string            `long:"artifactdir" description:"Directory for packed archives and ostree repositories (default: current directory)"`
@@ -200,6 +228,12 @@ func main() {
 	context.Origins["recipe"] = context.RecipeDir
 
 	context.Architecture = r.Architecture
+	context.HostArchitecture, err = getHostArchitecture()
+	if err != nil {
+		log.Printf("Unable to determine host architecture: %v\n", err)
+		exitcode = 1
+		return
+	}
 
 	context.State = debos.Success
 
