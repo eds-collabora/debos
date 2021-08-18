@@ -27,7 +27,10 @@ WORKDIR $GOPATH/src/github.com/stretchr/testify
 RUN git clone --depth 1 --branch v1.3.0 https://github.com/stretchr/testify . && \
     GO111MODULE=on go get ./...
 
-# Build debos
+# Temporary fix to make thigns build
+WORKDIR $GOPATH/src/github.com/go-debos/fakemachine
+RUN git clone --depth 1 --branch eds/portability https://github.com/eds-collabora/fakemachine . && go get -t ./...
+
 COPY . $GOPATH/src/github.com/go-debos/debos
 WORKDIR $GOPATH/src/github.com/go-debos/debos/cmd/debos
 RUN go get -t ./...
@@ -77,7 +80,6 @@ RUN echo "deb http://deb.debian.org/debian experimental main" > /etc/apt/sources
         pigz \
         libostree-1-1 \
         libslirp-helper \
-        linux-image-amd64 \
         openssh-client \
         parted \
         pkg-config \
@@ -86,7 +88,6 @@ RUN echo "deb http://deb.debian.org/debian experimental main" > /etc/apt/sources
         systemd-container \
         u-boot-tools \
         unzip \
-        user-mode-linux \
         xfsprogs \
         xz-utils \
         zip && \
