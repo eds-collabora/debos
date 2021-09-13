@@ -1,0 +1,16 @@
+
+{{- $image := or .image "debian.tgz" -}}
+
+architecture: amd64
+
+actions:
+  - action: pacstrap
+    configfile: "archconfig"
+
+  - action: run
+    chroot: true
+    command: echo arch > /etc/hostname
+
+  - action: pack
+    file: {{ $image }}
+    compression: gz
